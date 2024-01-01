@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/opt/render/.local/lib/python3.7/')
+sys.path.append('/opt/render/.local/bin/')
 
 from pytube import YouTube
 import os
