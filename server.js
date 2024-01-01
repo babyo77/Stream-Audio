@@ -17,7 +17,7 @@ app.get("/", async (req, res) => {
         res.send(`/music/${video_id}.mp3`);
         return;
       }
-      exec(`python download.py ${video_id}`, (error, stdout, stderr) => {
+      exec(`python download.py --no-warn-script-location ${video_id}`, (error, stdout, stderr) => {
         if (stdout.includes("Downloaded")) {
           res.send(`/music/${video_id}.mp3`);
         } else {
