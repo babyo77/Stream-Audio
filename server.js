@@ -18,12 +18,12 @@ app.get("/", async (req, res) => {
         return;
       }
       exec(`python download.py ${video_id}`, (error, stdout, stderr) => {
-        if(error,()=>{
+        if(error){
           console.log(error);
-        })
-        if(stderr,()=>{
+        }
+        if(stderr){
           console.log(stderr);
-        })
+        }
         if (stdout.includes("Downloaded")) {
           res.send(`/music/${video_id}.mp3`);
         } else {
