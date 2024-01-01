@@ -2,10 +2,12 @@ from pytube import YouTube
 import os
 import sys
 
+sys.path.append('/opt/render/.local/bin')
+
 def youtubedownload(video_id):
     try:
         yt = YouTube(f"https://youtube.com/watch?v={video_id}")
-        video = yt.streams.filter(only_audio=True).first()
+        video = yt.streams.filter(only_audio=True).order_by('bitrate').last()
         new_file = f"music/{video_id}.mp3"
         video.download(filename=new_file)
         print(f"Downloaded: {new_file}")
