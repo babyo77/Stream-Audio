@@ -3,6 +3,8 @@ import os
 import sys
 
 sys.path.append('/opt/render/.local/bin')
+print(sys.executable)
+print(sys.path)
 
 def youtubedownload(video_id):
     try:
