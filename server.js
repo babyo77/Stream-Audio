@@ -18,16 +18,10 @@ app.get("/", async (req, res) => {
         return;
       }
       exec(`python download.py ${video_id}`, (error, stdout, stderr) => {
-        if(error){
-          console.log(error);
-        }
-        if(stderr){
-          console.log(stderr);
-        }
         if (stdout.includes("Downloaded")) {
           res.send(`/music/${video_id}.mp3`);
         } else {
-          res.status(500).send("Internal Server Error");
+          res.status(500).json({ Error: error, stderr: stderr });
         }
       });
     } else {
