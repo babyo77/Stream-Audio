@@ -1,7 +1,7 @@
 const express = require("express");
 const StreamAudio = require("ytdl-core");
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 5000;
 const cors = require("cors");
 const fs = require("fs");
 const { exec } = require("child_process");
@@ -14,12 +14,24 @@ app.get("/", async (req, res) => {
     if (link) {
       const video_id = StreamAudio.getVideoID(link);
       if (fs.existsSync(`./music/${video_id}.mp3`)) {
-        res.send(`/music/${video_id}.mp3`);
+        const audioFilePath = `./music/${video_id}.mp3`;
+        const stat = fs.statSync(audioFilePath);
+        const stream = fs.createReadStream(audioFilePath);
+        res.setHeader("content-type", "audio/mpeg");
+        res.setHeader("Content-Length", stat.size);
+        stream.pipe(res);
+        console.log("ok");
         return;
       }
       exec(`python download.py "${video_id}"`, (error, stdout, stderr) => {
         if (stdout.includes("Downloaded")) {
-          res.send(`/music/${video_id}.mp3`);
+          const audioFilePath = `./music/${video_id}.mp3`;
+          const stat = fs.statSync(audioFilePath);
+          const stream = fs.createReadStream(audioFilePath);
+          res.setHeader("content-type", "audio/mpeg");
+          res.setHeader("Content-Length", stat.size);
+          console.log("2");
+          stream.pipe(res);
         } else {
           res.status(500).json({ Error: error, stderr: stderr });
         }
