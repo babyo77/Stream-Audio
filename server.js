@@ -19,6 +19,10 @@ app.get("/", async (req, res) => {
         const stream = fs.createReadStream(audioFilePath);
         res.setHeader("content-type", "audio/mpeg");
         res.setHeader("Content-Length", stat.size);
+
+        stream.on("end", () => {
+          res.end();
+        });
         stream.pipe(res);
         console.log("ok");
         return;
@@ -30,6 +34,11 @@ app.get("/", async (req, res) => {
           const stream = fs.createReadStream(audioFilePath);
           res.setHeader("content-type", "audio/mpeg");
           res.setHeader("Content-Length", stat.size);
+
+          stream.on("end", () => {
+            console.log("Streaming completed");
+            res.end();
+          });
           console.log("2");
           stream.pipe(res);
         } else {
