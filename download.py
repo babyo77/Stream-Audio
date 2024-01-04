@@ -1,9 +1,6 @@
 import sys
-sys.path.append('/opt/render/.local/bin/')
-
 from pytube import YouTube
 import os
-# import sys
 
 def youtubedownload(video_id):
     try:

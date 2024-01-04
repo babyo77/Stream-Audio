@@ -14,12 +14,12 @@ app.get("/", async (req, res) => {
     if (link) {
       const video_id = StreamAudio.getVideoID(link);
       if (fs.existsSync(`./music/${video_id}.mp3`)) {
-        sendStream(res)
+        sendStream(res,video_id)
         return;
       }
       exec(`python download.py "${video_id}"`, (error, stdout, stderr) => {
         if (stdout.includes("Downloaded")) {
-          sendStream(res)
+          sendStream(res,video_id)
         } else {
           res.status(500).json({ Error: error, stderr: stderr });
         }
@@ -32,7 +32,7 @@ app.get("/", async (req, res) => {
   }
 });
 
-function sendStream(res) {
+function sendStream(res,video_id) {
   const audioFilePath = `./music/${video_id}.mp3`;
   const stat = fs.statSync(audioFilePath);
   const stream = fs.createReadStream(audioFilePath);
