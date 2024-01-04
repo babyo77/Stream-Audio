@@ -14,24 +14,12 @@ app.get("/", async (req, res) => {
     if (link) {
       const video_id = StreamAudio.getVideoID(link);
       if (fs.existsSync(`./music/${video_id}.mp3`)) {
-        const audioFilePath = `./music/${video_id}.mp3`;
-        const stat = fs.statSync(audioFilePath);
-        const stream = fs.createReadStream(audioFilePath);
-        res.setHeader("content-type", "audio/mpeg");
-        res.setHeader("Content-Length", stat.size);
-        stream.pipe(res);
-        console.log("ok");
+        res.status(200).send(`./music/${video_id}.mp3`)
         return;
       }
       exec(`python download.py "${video_id}"`, (error, stdout, stderr) => {
         if (stdout.includes("Downloaded")) {
-          const audioFilePath = `./music/${video_id}.mp3`;
-          const stat = fs.statSync(audioFilePath);
-          const stream = fs.createReadStream(audioFilePath);
-          res.setHeader("content-type", "audio/mpeg");
-          res.setHeader("Content-Length", stat.size);
-          console.log("2");
-          stream.pipe(res);
+          res.status(200).send(`./music/${video_id}.mp3`)
         } else {
           res.status(500).json({ Error: error, stderr: stderr });
         }
