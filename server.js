@@ -14,24 +14,12 @@ app.get("/", async (req, res) => {
     if (link) {
       const video_id = StreamAudio.getVideoID(link);
       if (fs.existsSync(`./music/${video_id}.mp3`)) {
-        const audioFilePath = `./music/${video_id}.mp3`;
-        const stat = fs.statSync(audioFilePath);
-        const stream = fs.createReadStream(audioFilePath);
-        res.setHeader("content-type", "audio/mpeg");
-        res.setHeader("Content-Length", stat.size);
-        stream.pipe(res);
-        console.log("ok");
+        sendStream(res)
         return;
       }
       exec(`python download.py "${video_id}"`, (error, stdout, stderr) => {
         if (stdout.includes("Downloaded")) {
-          const audioFilePath = `./music/${video_id}.mp3`;
-          const stat = fs.statSync(audioFilePath);
-          const stream = fs.createReadStream(audioFilePath);
-          res.setHeader("content-type", "audio/mpeg");
-          res.setHeader("Content-Length", stat.size);
-          console.log("2");
-          stream.pipe(res);
+          sendStream(res)
         } else {
           res.status(500).json({ Error: error, stderr: stderr });
         }
@@ -43,6 +31,21 @@ app.get("/", async (req, res) => {
     res.json({ error: error.message });
   }
 });
+
+function sendStream(res) {
+  const audioFilePath = `./music/${video_id}.mp3`;
+  const stat = fs.statSync(audioFilePath);
+  const stream = fs.createReadStream(audioFilePath);
+  res.setHeader("content-type", "audio/mpeg");
+  res.setHeader("Content-Length", stat.size);
+  stream.on("end", () => {
+    res.end();
+  });
+  stream.on("error", () => {
+    res.end();
+  });
+  stream.pipe(res);
+}
 
 app.listen(port, () => {
   console.log(`http://localhost:${port}`);
